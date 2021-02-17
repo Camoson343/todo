@@ -1,7 +1,74 @@
-document.getElementById('button').addEventListener('click', () => {
-    const input = document.getElementById('input').value;
-    const todo = document.createElement('li');
-    todo.innerHTML = `${input}<span><button id="edit-todo">Edit</button></span><span><button id="delete-todo">Delete</button></span>`;
-    document.getElementById('todo-section').appendChild(todo);
-})
+//selectors
+const todoInput = document.querySelector('.todo_input');
+const todoButton = document.querySelector('.todo_button');
+const todoList = document.querySelector('.todo_list');
+const filterOption = document.querySelector('.filter_todo');
 
+const addTodo = (event) => {
+    event.preventDefault();
+    const todoDiv = document.createElement('div');
+    todoDiv.classList.add('todo');
+    const newTodo = document.createElement('li');
+    newTodo.innerText = todoInput.value;
+    todoDiv.appendChild(newTodo);
+    if(todoInput.value === ''){
+        return null;
+    }
+
+    const completedButton = document.createElement('button');
+    completedButton.innerHTML = '<i class="fas fa-check"></i>';
+    completedButton.classList.add('complete_btn')
+    todoDiv.appendChild(completedButton);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+    deleteButton.classList.add('delete_btn');
+    todoDiv.appendChild(deleteButton);
+    todoList.appendChild(todoDiv);
+    todoInput.value = '';
+}
+
+const deleteCheck = (e) => {
+    const item = e.target;
+    if(item.classList[0] === 'delete_btn'){
+        const todo = item.parentElement;
+        todo.classList.add("fall");
+        todo.addEventListener('transsitionend', () => {
+            todo.remove();
+        });
+    }
+    if(item.classList[0] === 'complete_btn'){
+        const todo = item.parentElement;
+        todo.classList.toggle('completedItem');
+    }
+}
+
+const filterTodo = (e) => {
+    const todos = todoList.childNodes;
+    for(let i = 1; i < todos.length; i++){
+        switch(e.target.value){
+            case "all":
+                todos[i].style.display = "flex";
+                break;
+            case "completed":
+                if(todos[i].classList.contains('completedItem')){
+                    todos[i].style.display = 'flex';
+                } else {
+                    todos[i].style.display = "none";
+                }
+                break;
+            case "uncompleted":
+                if(!todos[i].classList.contains('completedItem')){
+                    todos[i].style.display = "flex";
+                } else {
+                    todos[i].style.display = "none";
+                } 
+                break;
+        }
+    }
+}
+
+//event listeners
+todoButton.addEventListener('click', addTodo);
+todoList.addEventListener('click', deleteCheck);
+filterOption.addEventListener('click', filterTodo);
